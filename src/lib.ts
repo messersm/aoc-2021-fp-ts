@@ -37,13 +37,29 @@ export const countIncreases = flow(
 )
 
 
-export const readTextfile =
-    (name: string): TE.TaskEither<Error, string> =>
-    TE.tryCatch(() => fs.readFile(name, "utf-8"), E.toError)
-
 export const getInputFilename: IOE.IOEither<Error, string> = pipe(
     process.argv,
     RA.dropLeft(2), // Ignore the ts-node command and script filename.
     RA.last,
     IOE.fromOption(() => new Error("No input file provided.")),
 )
+
+
+export const readTextfile =
+    (name: string): TE.TaskEither<Error, string> =>
+    TE.tryCatch(() => fs.readFile(name, "utf-8"), E.toError)
+
+
+export const zip3 =
+    <C>(cs: readonly C[]) =>
+    <B>(bs: readonly B[]) =>
+    <A>(as: readonly A[]): readonly [A, B, C][] => {
+        const items = [as, bs, cs]
+        const length = Math.min(...items.map(x => x.length))
+
+        let result: [A, B, C][] = []
+        for (let i=0; i<length; i++)
+            result.push([as[i], bs[i], cs[i]])
+
+        return result
+    }
