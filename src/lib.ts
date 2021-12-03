@@ -26,6 +26,16 @@ export const contentsToNumbers = flow(
     E.sequenceArray,
 )
 
+export const countIncreases = flow(
+    (xs: readonly number[]) => RA.zipWith(
+        RA.dropLeft(1)(xs),
+        xs,
+        (x, y) => x - y > 0
+    ),
+    RA.filter(Boolean),
+    RA.size
+)
+
 
 export const readTextfile =
     (name: string): TE.TaskEither<Error, string> =>
