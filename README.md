@@ -9,5 +9,5 @@ Something like the following should get you going:
 ```bash
 cd aoc-2021-fp-ts
 npm ci
-npx ts-node src/[file]
+npx ts-node src/[puzzle].ts input/[input]
 ```
