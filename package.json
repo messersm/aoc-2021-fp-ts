@@ -1,0 +1,23 @@
+{
+  "name": "aoc-2021-fp-ts",
+  "version": "1.0.0",
+  "description": "Advent of Code with fp-ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/messersm/aoc-2021-fp-ts.git"
+  },
+  "author": "Maik Messerschmidt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/messersm/aoc-2021-fp-ts/issues"
+  },
+  "homepage": "https://github.com/messersm/aoc-2021-fp-ts#readme",
+  "dependencies": {
+    "fp-ts": "^2.11.5",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  }
+}
