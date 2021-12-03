@@ -29,11 +29,7 @@ export const contentsToNumbers = flow(
 
 export const readTextfile =
     (name: string): TE.TaskEither<Error, string> =>
-    () =>
-    fs.readFile(name, "utf-8")
-        .then(E.right)
-        .catch(flow(E.toError, E.left))
-
+    TE.tryCatch(() => fs.readFile(name, "utf-8"), E.toError)
 
 export const getInputFilename: IOE.IOEither<Error, string> = pipe(
     process.argv,
