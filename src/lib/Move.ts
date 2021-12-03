@@ -62,6 +62,13 @@ export type Position = {
     readonly depth: number
 }
 
+export type PositionWithAim = {
+    readonly _tag: "PositionWithAim"
+    readonly horizontal: number,
+    readonly depth: number
+    readonly aim: number
+}
+
 export const applyMove = (m: Move) => (p: Position): Position => {
     switch(m._tag) {
         case "Forward": return {...p, horizontal: p.horizontal + m.value }
@@ -73,8 +80,32 @@ export const applyMove = (m: Move) => (p: Position): Position => {
     }
 }
 
+export const applyMoveWithAim =
+    (m: Move) =>
+    (p: PositionWithAim): PositionWithAim => {
+        switch(m._tag) {
+            case "Forward": return {
+                ...p,
+                horizontal: p.horizontal + m.value,
+                depth: p.depth + p.aim * m.value
+            }
+            case "Down": return { ...p, aim: p.aim + m.value }
+            case "Up": return { ...p, aim: p.aim - m.value }
+    
+            // exhaustive pattern matching
+            default: return identity<never>(m)
+        }
+    }
+
 export const startPos: Position = {
     _tag: "Position",
     horizontal: 0,
     depth: 0
+}
+
+export const startPosWithAim: PositionWithAim = {
+    _tag: "PositionWithAim",
+    horizontal: 0,
+    depth: 0,
+    aim: 0
 }
