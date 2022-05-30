@@ -4,9 +4,10 @@ import * as E from 'fp-ts/Either'
 import * as IOE from 'fp-ts/IOEither'
 import * as RA from 'fp-ts/ReadonlyArray'
 import * as S from 'fp-ts/string'
-import * as TE from 'fp-ts/TaskEither'
+import * as TE from './lib/TaskEither'
 
 import { flow, pipe } from 'fp-ts/function'
+import { Endomorphism } from 'fp-ts/lib/Endomorphism'
 
 
 export const numberFromString = (s: string): E.Either<Error, number> => {
@@ -36,15 +37,19 @@ export const countIncreases = flow(
     RA.size
 )
 
-
-export const getInputFilename: IOE.IOEither<Error, string> = pipe(
+/**
+ * Return the input filename provided to the node runtime.
+ */
+export const getInputFilename: IOE.IOEither<Error, string> = () => pipe(
     process.argv,
     RA.dropLeft(2), // Ignore the ts-node command and script filename.
     RA.last,
-    IOE.fromOption(() => new Error("No input file provided.")),
+    E.fromOption(() => new Error("No input file provided."))
 )
 
-
+/**
+ * Try to asynchronously read the file specified by `name` as text file.
+ */
 export const readTextfile =
     (name: string): TE.TaskEither<Error, string> =>
     TE.tryCatch(() => fs.readFile(name, "utf-8"), E.toError)
@@ -63,3 +68,15 @@ export const zip3 =
 
         return result
     }
+
+
+export const getMain =
+    <A>(parse: (s: string) => E.Either<Error, A>) =>
+    <B>(compute: (a: A) => B) => pipe(
+        TE.fromIOEither(getInputFilename),
+        TE.chain(readTextfile),
+        TE.chainEitherK(parse),
+        TE.map(compute),
+        TE.log,
+        TE.logError
+)

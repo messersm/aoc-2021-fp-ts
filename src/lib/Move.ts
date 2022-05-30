@@ -1,9 +1,12 @@
 import * as E from 'fp-ts/Either'
+import * as Endo from 'fp-ts/Endomorphism'
+import * as M from 'fp-ts/Monoid'
 import * as RA from 'fp-ts/ReadonlyArray'
 import * as S from 'fp-ts/string'
 
 import { flow, identity, pipe } from 'fp-ts/function'
 import { numberFromString } from '../lib'
+
 
 export interface Forward {
     readonly _tag: "Forward"
@@ -96,6 +99,24 @@ export const applyMoveWithAim =
             default: return identity<never>(m)
         }
     }
+
+/**
+ * Concatenates an array of moves under some endomorphism arising from each move.
+ * 
+ * @example
+ * ```
+ * import { Endomorphism } from 'fp-ts/Endomorphism'
+ * import { Move, concatWith, applyMove } from './lib/Move'
+ * 
+ * const x: (moves: Move[] => Endomorphism<Position>) = concatWith(applyMove)
+ * ```
+ */
+export const concatWith =
+    <A>(method: (move: Move) => Endo.Endomorphism<A>) =>
+    flow(
+        RA.map(method),
+        M.concatAll(Endo.getMonoid())
+    )
 
 export const startPos: Position = {
     _tag: "Position",
